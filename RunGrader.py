@@ -1,9 +1,9 @@
 """Actual file to run the grader.
    Author: Kyle W Burke (kwburke@plymouth.edu)
 E.g. to grade project (e.g.) 1:
-$ python3 RunGrader 1   (use python3 for machines with default python 2)
+$ python3 RunGrader.py 1   (use python3 for machines with default python 2)
 To grade just one student:
-$ python3 RunGrader 1 kgb1013 
+$ python3 RunGrader.py 1 kwburke
 """
 
 import sys
@@ -56,7 +56,7 @@ def main():
     #all students
     students = [("kwburke", "Kyle Burke"), ("jwdoe", "Jane Doe")]
     
-    #grades_file = open("grades.txt", 'w') #The grader writes the output to this file
+    #grades_file = open("grades.txt", 'w') #The grader writes the output to this file.  (There is a default for the ProjectGrader, and a new file can only be specified for a more specialized version of the grader (the HaltingGrader) so I have commented things related to this out for now.  Hopefully this will be updated in the future.
     
     max_students = len(students)
     
@@ -87,8 +87,8 @@ def main():
             if student[1] == student_file_prefix:
                 less_students.append(student)
         if less_students == []:
-            #the student was not in the list.  Create a dummy student pair
-            less_students = [("??? ????", student_file_prefix)]
+            #the student was not in the list.  Create a dummy student pair.
+            less_students = [(student_file_prefix, "???? ?????")] 
         #grades_file.close()
         #grades_file = open("grades.txt", 'a')  #If I'm only grading one person, I usually want to just add that to the end of the grading file instead of replacing the whole thing.
         students = less_students

@@ -501,7 +501,7 @@ class RecursiveFunctionTest(FunctionTest):
 class FunctionDocstringTest(FunctionTest):
     """Tests whether a function has a docstring.  It has no children and always deducts 3 points in the absence of a docstring."""
     
-    def __init__(self):
+    def __init__(self, failPoints = -3):
         description = "Tests to see whether this function has a docstring."
         isCalled = False
         parameters = ()
@@ -510,7 +510,9 @@ class FunctionDocstringTest(FunctionTest):
         passPoints = 0
         passSubtests = []
         failMessage = "This function does not have a valid docstring!"
-        failPoints = -3
+        if (failPoints > 0):
+            #ensure that the fail points is negative.  Seems like this could be a common error.
+            failPoints = -1*abs(failPoints)
         failSubtests = []
         preRunStatements = []
         postRunStatements = []

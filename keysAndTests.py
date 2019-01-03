@@ -5,7 +5,7 @@ import math
 import sys
 from ProjectGrader import *
 
-docstring_test = FunctionDocstringTest() #use this like a singleton
+docstring_test = FunctionDocstringTest(1) #use this like a singleton
 
 recursive_test = RecursiveFunctionTest() #use this like a singleton
 
