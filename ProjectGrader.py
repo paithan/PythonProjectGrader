@@ -13,7 +13,7 @@ import copy
 import sys
 import re
 #sys.path.append('../../swampy.1.1/')
-from TurtleWorld import *
+#from TurtleWorld import *
 import io # https://docs.python.org/3/library/io.html#io.StringIO
 import types
 import importlib
@@ -220,7 +220,11 @@ class FunctionTest(object):
             #Evaluate any parameters
             parameters = []
             for statement in self.parameters:
-                parameters.append(eval(str(statement)))
+                try:
+                    parameters.append(eval(str(statement)))
+                except:
+                    #sometimes the parameter is just the value itself; it shouldn't be evaluated further.
+                    parameters.append(statement)
                 
             #Redirect sys.stdout so we don't have to print everything
             oldStdout = sys.stdout #save the old stdout value
@@ -918,7 +922,7 @@ class ProjectGrader(object):
     """Describes the tools necessary to grade a project."""
     
     def __init__(self, projectNumber, functionTesters):
-        """docstring goes here, yo."""
+        """Constructor."""
         self.projectNumber = projectNumber
         self.functionTesters = functionTesters
         
@@ -1027,7 +1031,8 @@ class ProjectGrader(object):
             if not student[0] in dropped:
                 gradesFile.write("" + student[1] + " \n")
                 print("**~~~~~~~~~~~~~Grading " + student[1] + "'s Project~~~~~~~~~~~~~**\n")
-                moduleName = student[0] + "_project" + str(self.projectNumber)
+                # old version: moduleName = student[0] + "_project" + str(self.projectNumber)
+                moduleName = student[0] + "_projects"
                 moduleLoaded = False
                 syntaxErrored = False
                 fileNameError = False
