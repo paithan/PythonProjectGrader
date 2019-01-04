@@ -41,6 +41,7 @@ project_graders.append(grader) #add the grader to the list
 grader = ProjectGrader(1, [])  #I stopped with the verbose parameters for this one
 
 grader.set_function_tester(7, point_init_tester)
+grader.set_function_tester(9, raphael_draw_square_tester)
 
 project_graders.append(grader)
 

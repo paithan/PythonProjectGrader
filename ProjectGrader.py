@@ -17,6 +17,8 @@ import re
 import io # https://docs.python.org/3/library/io.html#io.StringIO
 import types
 import importlib
+from pathlib import Path
+import stat
 
 def get_whitespace_prefix(string):
     """Returns the longest prefix of a given string composed only of tabs and spaces."""
@@ -203,9 +205,9 @@ class FunctionTest(object):
             try:
                 pre_code = compile(pre_run, 'pre_run_stuff', 'exec')
                 exec(pre_code) 
-            except:
+            except Exception as err:
                 print("Failed while exec-ing some pre-run statements.  Code:\n", pre_run)   
-            
+                print("Problem:", err, "\n")
             
             #Set up variables for the test by executing any necessary pre-test statements.
 #             for statement in self.preRunStatements:
@@ -220,11 +222,13 @@ class FunctionTest(object):
             #Evaluate any parameters
             parameters = []
             for statement in self.parameters:
-                try:
-                    parameters.append(eval(str(statement)))
-                except:
-                    #sometimes the parameter is just the value itself; it shouldn't be evaluated further.
-                    parameters.append(statement)
+                parameters.append(eval(str(statement)))
+                #I decided it was a bad idea to let this fly.  If the parameter can't be evaluated, treating it as a string is dangerous
+                #try:
+                #    parameters.append(eval(str(statement)))
+                #except:
+                #    #sometimes the parameter is just the value itself; it shouldn't be evaluated further.
+                #    parameters.append(statement)
                 
             #Redirect sys.stdout so we don't have to print everything
             oldStdout = sys.stdout #save the old stdout value
@@ -425,23 +429,54 @@ class JudgmentCallFunctionTest(AtomicFunctionTest):
         postRunStatements.append("if (not prepass) and passed:\n    save_pass(eval(functionString).__name__, " + test_code + ", module.__name__)")
         AtomicFunctionTest.__init__(self, parameters, correctnessTest, messages, points, "Asks the user whether a function should pass, then stores the result to shortcut in the future.", preRunStatements, postRunStatements)
         self.add_prepass_expression_as_string(prepass_expression)
+  
+def pass_file_exists(function_name, test_code):
+    '''Checks to see that the pass file exists, and in a folder called 'judgmentCalls'.'''
+    #store everything in a directory called judgmentCalls
+    judgment_calls = Path("./judgmentCalls")
+    if not judgment_calls.exists():
+        judgment_calls.mkdir()
+    
+    #if the file doesn't exist, create it
+    filename = 'judgmentCalls/' + function_name + '-' + test_code + '.txt'
+    calls_file = Path("./" + filename)
+    if not calls_file.exists():
+        calls_file.touch()
         
+        #give everyone read/write permissions
+        calls_file.chmod(stat.S_IRUSR) #user can read it
+        calls_file.chmod(stat.S_IWUSR) #user can write to it
+        calls_file.chmod(stat.S_IRGRP) #group can read it
+        calls_file.chmod(stat.S_IWGRP) #group can write to it
+        calls_file.chmod(stat.S_IROTH) #others can read it
+        calls_file.chmod(stat.S_IWOTH) #others can write to it
+        
+        calls_file.chmod(0o777)
+    
 
 def did_pass(function_name, test_code, module_name):
     """Checks a file, named by the function, to see whether the named module is listed as having completed that function."""
-    f = open('judgmentCalls/' + function_name + '-' + test_code + '.txt', 'r')
+    #first, make sure the directory and file are set up correctly
+    pass_file_exists(function_name, test_code)
+    
+    filename = 'judgmentCalls/' + function_name + '-' + test_code + '.txt'
+    f = open(filename, 'r')
     passed = False
     for line in f:
         if line.startswith(module_name):
             passed = True
     f.close()
-    #print('did_pass: ' + function_name + ", " + str(test_code) + ", " + str(passed), type(passed)) #TODO: here for debugging
+    #print('did_pass: ' + function_name + ", " + str(test_code) + ", " + str(passed), type(passed))
     return passed
     
     
 def save_pass(function_name, test_code, module_name):
     """Writes to a file, named function_name, a new line with the given module_name, indicating that that module has passed the function test."""
-    f = open('judgmentCalls/' + function_name + '-' + test_code + '.txt', 'a')
+    #first, make sure the directory and file are set up correctly
+    pass_file_exists(function_name, test_code)
+    
+    filename = 'judgmentCalls/' + function_name + '-' + test_code + '.txt'
+    f = open(filename, 'a')
     f.write(module_name + "\n")
     f.close()
 

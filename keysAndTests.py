@@ -56,7 +56,7 @@ def print_greeting(name):
     
 
 #Here's a test that checks the printed output.  (The interface is exactly the same, it's just a different object.)
-inputs = ["Monkey"]
+inputs = ["'Monkey'"]  #The inputs will be evaluated, so put string inputs inside two sets of quotes.  This string will evaluate to the string 'Monkey'.
 solution = "Hi, Monkey!"
 correct_feedback = "Passes the monkey test, excellent!"
 incorrect_feedback = "Fails the monkey test"
@@ -65,7 +65,7 @@ incorrect_points = 0
 print_greeting_test_0 = PrintingFunctionTest(inputs, solution, [correct_feedback, incorrect_feedback], [correct_points, incorrect_points])
 
 #Alternatively (or additionally) you might want to be more lenient on the printed output using regular expressions.  Here's an example of doing that.
-inputs = ["BoJimbo"]
+inputs = ["'BoJimbo'"]
 solution = "[Hh]i,? BoJimbo!?"
 correct_feedback = "Uses the correct words (though not necessarily the punctuation/capitalization)."
 incorrect_feedback = "This doesn't print the right words."
@@ -128,7 +128,30 @@ point_init_tester = FunctionTestWrapper([docstring_test, point_init_test], total
 
 
 
-#TODO: add an example of how to do Judgement-Call tests.
+#TODO: add an example of how to do Judgement-Call tests.  In order to make these tests, we will store the result once it's done correctly so we don't have to ask anymore.  In order to do this, each judgment call function needs to have a separate test code, which should be something that evaluates to a unique string.  (But it also needs to be the same every time, so no random generation.)
 
+import turtle
 
+def draw_square(turtle):
+    '''Draws a square with a given turtle.'''
+    for i in range(4):
+        turtle.fd(100)
+        turtlel.lt(90)
+    
 
+inputs = ["raphael"]
+correctness_question = "Did raphael draw the square?  (In blue and with sides of 100.)"
+test_code = "'0'"  #The test code needs to evaluate to a string, so again with the double quotes.
+correct_feedback = "Works perfectly!"
+incorrect_feedback = "Doesn't work."
+correct_points = 5
+incorrect_points = 0
+#these statements create the turtle, set the pen color to blue (so you know it was raphael that drew it, and not a separate turtle), and draw a nearby marker 100 units long to show the correct distance
+pre_run_statements = ["import turtle", "turtle.clearscreen", "raphael = turtle.Turtle()", "raphael.pencolor('blue')", "raphael.fd(100)", "raphael.lt(90)", "raphael.fd(6)", "raphael.bk(12)", "raphael.fd(6)", "raphael.lt(90)", "raphael.fd(100)", "raphael.rt(90)", "raphael.bk(6)", "raphael.fd(12)", "raphael.penup()", "raphael.fd(14)", "raphael.pendown()", "raphael.rt(90)"]
+post_run_statements = ["turtle.clearscreen()"]
+raphael_draw_square_test_0 = JudgmentCallFunctionTest(inputs, correctness_question, test_code, [correct_feedback, incorrect_feedback], [correct_points, incorrect_points], pre_run_statements, post_run_statements)
+
+total_points = 5
+function_name = "draw_square"
+common_misspellings = []
+raphael_draw_square_tester = FunctionTestWrapper([docstring_test, raphael_draw_square_test_0], total_points, function_name, common_misspellings)

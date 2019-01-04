@@ -15,3 +15,8 @@ class Point(object):
         self.y = y
     
     
+def draw_square(turtle):
+    '''Draws a square with a given turtle.'''
+    for i in range(3):
+        turtle.fd(100)
+        turtle.lt(90)
