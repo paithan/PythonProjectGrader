@@ -15,3 +15,15 @@ $ python3 RunGrader.py 0
 
 Then look at project0Grades.txt for the output.
 
+Also run 
+
+$ python3 RunGrader.py 1
+
+Then see the output in project1Grades.txt.
+
+RunGrader.py puts the testers into projects and runs the grader based on the command-line arguments.
+
+keysAndTests.py defines the key projects and the testers to check accuracy of student submissions.
+
+kwburke_projects.py and jwdoe_projects.py are two sample submission files.
+
