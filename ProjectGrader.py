@@ -911,6 +911,7 @@ class PartResults(object):
     def get_num_incorrect_parts(self):
         """Returns the number of tests that failed."""
         return self.results.get_num_incorrect_parts()
+    
 
     
 class ProjectResults(object):
@@ -951,15 +952,16 @@ class ProjectResults(object):
             if not result.full_credit():
                 incorrect_parts += 1
         return incorrect_parts
-        
-        
+ 
+  
+  
 #Next parts grade a whole project for one or more students
 
 class ProjectGrader(object):
     """Describes the tools necessary to grade a project."""
     
     def __init__(self, projectNumber, functionTesters):
-        """Constructor."""
+        """Constructor.  functionTesters is a list of FunctionTest objects."""
         self.projectNumber = projectNumber
         self.functionTesters = functionTesters
         
@@ -987,7 +989,7 @@ class ProjectGrader(object):
         return maxPoints
         
     def testFunction(self, functionTester, module, partNumber):
-        """Applies the test to the function.  Returns a PartResults object.  This does not modify previous_results, it just uses it in case the information is vital."""
+        """Applies the test to the function.  Returns a PartResults object. functionTester is a FunctionTestWrapper object.  This does not modify previous_results, it just uses it in case the information is vital."""
         #print(functionTester)
         if functionTester == None:
             results = PartResults()
@@ -995,9 +997,14 @@ class ProjectGrader(object):
             try:
                 #results becomes a PartResults object
                 results = functionTester.runTestsOnModule(module, partNumber)
+            #except KeyboardInterrupt:
+            #    #We should probably throw another exception here!
+            #    raise KeyboardInterrupt
+            #    TODO: what's the best way to kill turtleworld here?
             except:
                 results = PartResults("Part " + str(partNumber))
-                results.add_result("Your code for this part causes exceptions on some inputs!", 0, self.getNonBonusMaxPoints())
+                #results.add_result("Your code for this part causes exceptions on some inputs!", 0, self.getNonBonusMaxPoints())
+                results.add_result("Your code for this part causes exceptions on some inputs!", 0, functionTester.getPointsOutOf())
                 print("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
                 print("Unexpected error:", sys.exc_info()[0], "more info:", sys.exc_info()[1])
                 traceback.print_tb(sys.exc_info()[2])
